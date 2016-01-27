@@ -1,6 +1,6 @@
 (function() {
-  function Fixtures() {
-    var Fixtures = {};
+    function Fixtures() {
+      var Fixtures = {};
 
     var albumPicasso = {
         name: 'The Colors',
@@ -36,6 +36,14 @@
       return albumPicasso;
     };
 
+    Fixtures.getcollection = function(numberOfAlbums) {
+      var albums = [];
+      for (var i = 0; i < numberOfAlbums; i++){
+        albums.push(albumPicasso);
+      }
+      return albums;
+    };
+
     return Fixtures;
   }
 
@@ -43,4 +51,4 @@
     .module('blocJams')
     .factory('Fixtures', Fixtures);
 
-})();
+ })();
