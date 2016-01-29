@@ -1,13 +1,19 @@
 (function() {
-  function SongPlayer() {
+  function SongPlayer(Fixtures) {
     var SongPlayer = {};
+    
+    var currentAlbum = Fixtures.getAlbum();
+ 
+    var getSongIndex = function(song){
+      return currentAlbum.songs.indexOf(song);
+    }
 
-    var currentSong = null;
-    /**
-    * @desc Buzz object audio file
+    /* *
+    * @desc Active song object from list of songs
     * @type {Object}
     */
-    var currentBuzzObject = null;
+    SongPlayer.currentSong = null;   
+    
     /**
     * @function setSong
     * @desc Stops currently playing song and loads new audio file as currentBuzzObject
@@ -15,8 +21,7 @@
     */
     var setSong = function(song) {
       if (currentBuzzObject) {
-        currentBuzzObject.stop();
-        currentSong.playing = null;
+        stopSong();
       }
  
       currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -26,6 +31,9 @@
  
       currentSong = song;
     };
+
+
+
 
 
 
@@ -41,25 +49,87 @@
       }
     }
 
+    /* *
+    * @function stopSong
+    * @desc stop playing song
+    */
+    function stopSong(){
+      if (currentBuzzObject){
+        currentBuzzObject.stop();
+        song.playing = null;
+      }
+    }
 
 
+
+
+    /**
+    * @function play
+    * @desc Play current or new song
+    * @param {Object} song
+    */
     SongPlayer.play = function(song) {
-      if (currentSong !== song) {
+      song = song || SongPlayer.currentSong;
+      if (SongPlayer.currentSong !== song) {
         setSong(song);
 
         currentBuzzObject.play();
         song.playing = true;
 
-      } else if (currentSong === song) {
+      } else if (SongPlayer.currentSong === song) {
           if (currentBuzzObject.isPaused()) {
               currentBuzzObject.play();
           }
       } 
     };
 
+    /**
+    * @function pause
+    * @desc Pause current song
+    * @param {Object} song
+    */
     SongPlayer.pause = function(song) {
+      song = song || SongPlayer.currentSong;
       currentBuzzObject.pause();
       song.playing = false;
+    };
+
+    /**
+    * @function previous
+    * @desc Select previous song
+    */
+    SongPlayer.previous = function() {
+      var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+      currentSongIndex--;
+      
+      if (currentSongIndex < 0) {
+        currentBuzzObject.stop();
+        SongPlayer.currentSong.playing = null;
+      } else {
+        var song = currentAlbum.songs[currentSongIndex];
+        setSong(song);
+        playSong(song);
+      }
+
+    };
+
+    /**
+    * @function next
+    * @desc Select next song
+    */
+    SongPlayer.next = function() {
+      var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+      currentSongIndex++;
+      
+      if (currentSongIndex > currentAlbum.songs.length) {
+        currentBuzzObject.stop();
+        SongPlayer.currentSong.playing = null;
+      } else {
+        var song = currentAlbum.songs[currentSongIndex];
+        setSong(song);
+        playSong(song);
+      }
+
     };
 
     return SongPlayer;
