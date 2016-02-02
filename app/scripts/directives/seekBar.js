@@ -16,7 +16,7 @@
       replace: true,
       restrict: 'E',
       scope: { },
-      
+
       link: function(scope, element, attributes) {
         scope.value = 0;
         scope.max = 100;
@@ -36,6 +36,10 @@
           return {width: percentString()};
         };
 
+        scope.thumbStyle = function(){
+          return {left: percentString()};
+        };
+
 
 
 
@@ -48,6 +52,7 @@
         scope.trackThumb = function() {
           $document.bind('mousemove.thumb', function(event) {
             var percent = calculatePercent(seekBar, event);
+            
             scope.$apply(function() {
               scope.value = percent * scope.max;
             });
